@@ -14,6 +14,8 @@ import org.jpos.ee.pm.core.PMContext;
 import org.jpos.ee.pm.core.PMException;
 import org.jpos.ee.pm.core.PaginatedList;
 import org.jpos.ee.pm.core.PresentationManager;
+import org.jpos.ee.pm.core.operations.OperationCommandSupport;
+import org.jpos.ee.pm.vaadin.commands.GenericCommand;
 import org.jpos.ee.pm.vaadin.commands.ListCommand;
 
 /**
@@ -42,7 +44,7 @@ public class TableNavForm extends Form {
 
         setupRowPerPageCombo(ctx, list, l, window);
 
-        total = new Label(PresentationManager.getMessage("list.pagebar", list.getPage(),list.getPages(),((list.getTotal() != null) ? list.getTotal() : "?"))                );
+        total = new Label(PresentationManager.getMessage("list.pagebar", list.getPage(), list.getPages(), ((list.getTotal() != null) ? list.getTotal() : "?")));
         l.addComponent(total);
 
         listOfPages = new ArrayList<Button>();
@@ -96,11 +98,11 @@ public class TableNavForm extends Form {
                 button.addListener(new Button.ClickListener() {
 
                     public void buttonClick(ClickEvent event) {
-                        final ListCommand c = new ListCommand(ctx);
                         list.setPage((Integer) event.getButton().getData());
-                        ctx.put("page", list.getPage());
-                        ctx.put("new", false);
-                        window.setMainScreen(c.execute());
+                        PMContext c = cloneContext(ctx);
+                        c.put("page", list.getPage());
+                        final ListCommand cmd = new ListCommand(c);
+                        window.setMainScreen(cmd.execute());
                     }
                 });
             }
@@ -128,13 +130,26 @@ public class TableNavForm extends Form {
         rowPerPage.addListener(new ValueChangeListener() {
 
             public void valueChange(Property.ValueChangeEvent event) {
-                final ListCommand c = new ListCommand(ctx);
                 list.setRowsPerPage(Integer.parseInt((String) event.getProperty().getValue()));
-                ctx.put("rows_per_page", list.getRowsPerPage());
-                ctx.put("new", false);
-                window.setMainScreen(c.execute());
+                PMContext c = cloneContext(ctx);
+                c.put("rows_per_page", list.getRowsPerPage());
+                final ListCommand cmd = new ListCommand(c);
+                window.setMainScreen(cmd.execute());
             }
         });
         l.addComponent(rowPerPage);
+    }
+
+    protected PMContext cloneContext(PMContext ctx) {
+        final PMContext c = new PMContext(ctx.getSessionId());
+        c.put(OperationCommandSupport.PM_ID, ctx.get("entity"));
+        c.put(GenericCommand.WINDOW, ctx.get(GenericCommand.WINDOW));
+        c.put("new", false);
+        c.put("order", ctx.get("order"));
+        c.put("desc", ctx.get("desc"));
+        c.put("page", ctx.get("page"));
+        c.put("rows_per_page", ctx.get("rows_per_page"));
+        c.put("new", false);
+        return c;
     }
 }
