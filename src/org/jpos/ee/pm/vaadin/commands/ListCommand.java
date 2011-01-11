@@ -69,6 +69,7 @@ public class ListCommand extends GenericCommand {
                             c.put(OperationCommandSupport.PM_ITEM, target.toString());
                             c.put(WINDOW, getCtx().get(WINDOW));
                             actions[i] = new LocalListAction(c, operation);
+                            actions[i].setIcon(getOperationIcon(operation));
                             i++;
                         }
                         return actions;

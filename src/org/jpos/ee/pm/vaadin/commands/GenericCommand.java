@@ -40,7 +40,7 @@ public abstract class GenericCommand {
         }
         for (final Operation operation : opers.getOperations()) {
             final Button button = new Button(operation.getId());
-            button.setIcon(new ThemeResource("./operations/" + operation.getId() + ".gif"));
+            button.setIcon(getOperationIcon(operation));
             bar.addComponent(button);
             button.addListener(new Button.ClickListener() {
 
@@ -56,6 +56,10 @@ public abstract class GenericCommand {
             });
         }
         vl.addComponent(bar);
+    }
+
+    protected ThemeResource getOperationIcon(final Operation operation) {
+        return new ThemeResource("./operations/" + operation.getId() + ".gif");
     }
 
     public abstract HorizontalLayout execute();
