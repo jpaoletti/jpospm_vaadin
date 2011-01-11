@@ -12,6 +12,8 @@ public class CommandFactory {
     public static GenericCommand newCommand(String id, PMContext ctx) {
         if("list".equals(id)){
             return new ListCommand(ctx);
+        } else if ("show".equals(id)){
+            return new ShowCommand(ctx);
         } else if ("add".equals(id)){
         }
         return null;
