@@ -2,6 +2,7 @@ package org.jpos.ee.pm.vaadin;
 
 import com.vaadin.event.Action.*;
 import org.jpos.ee.pm.core.*;
+import org.jpos.ee.pm.vaadin.converters.VaadinShowStringConverter;
 
 /**
  *
@@ -10,14 +11,12 @@ import org.jpos.ee.pm.core.*;
 public class PMVaadinService extends PMService {
 
     @Override
-    public String visualizationWrapper(String s) {
-        if (s == null) {
-            return "void.jsp?text=";
-        }
-        if (s.contains(".jsp?") || s.contains(".do?")) {
-            return s;
-        } else {
-            return "void.jsp?text=" + s;
+    protected void initService() throws Exception {
+        super.initService();
+        if(getDefaultConverter()==null){
+            setDefaultConverter(new VaadinShowStringConverter());
         }
     }
+
+    
 }
