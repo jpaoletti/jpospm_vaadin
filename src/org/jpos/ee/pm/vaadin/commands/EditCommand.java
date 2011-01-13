@@ -5,6 +5,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import org.jpos.ee.pm.core.*;
+import org.jpos.ee.pm.core.operations.EditOperation;
 import org.jpos.ee.pm.core.operations.ShowOperation;
 import org.jpos.ee.pm.vaadin.components.GenericForm;
 
@@ -21,8 +22,7 @@ public class EditCommand extends GenericCommand {
     @Override
     public HorizontalLayout execute() {
         try {
-            ShowOperation op = new ShowOperation("edit");
-            op.excecute(getCtx());
+            doExcecute();
 
             HorizontalLayout l = new HorizontalLayout();
             l.setSizeFull();
@@ -64,5 +64,10 @@ public class EditCommand extends GenericCommand {
             PresentationManager.getPm().error(ex);
             return getErrorLayout(ex);
         }
+    }
+
+    protected void doExcecute() throws PMException {
+        EditOperation op = new EditOperation("edit");
+        op.excecute(getCtx());
     }
 }

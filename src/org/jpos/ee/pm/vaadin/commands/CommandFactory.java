@@ -15,6 +15,7 @@ public class CommandFactory {
         } else if ("show".equals(id)) {
             return new ShowCommand(ctx);
         } else if ("add".equals(id)) {
+            return new AddCommand(ctx);
         } else if ("edit".equals(id)) {
             return new EditCommand(ctx);
         }
