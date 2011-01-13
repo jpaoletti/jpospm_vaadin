@@ -5,8 +5,13 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.jpos.ee.pm.core.Entity;
+import org.jpos.ee.pm.core.Operation;
 import org.jpos.ee.pm.core.PMContext;
+import org.jpos.ee.pm.core.PMCoreObject;
 import org.jpos.ee.pm.core.PMException;
+import org.jpos.ee.pm.core.PresentationManager;
+import org.jpos.ee.pm.vaadin.VaadinSupport;
 
 /**
  *
@@ -19,28 +24,15 @@ public class GenericForm extends Form {
     public GenericForm(PMContext ctx, Object instance) throws PMException {
         this.ctx = ctx;
         setWriteThrough(false);
-        setFormFieldFactory(new PMFieldFactory());
-        List<String> vp = new ArrayList<String>();
+        ctx.put(PMCoreObject.PM_ENTITY_INSTANCE, instance);
         for (org.jpos.ee.pm.core.Field field : ctx.getEntity().getOrderedFields()) {
-            vp.add(field.getProperty());
+            addField(field.getId(), VaadinSupport.createField(getCtx(), field.getId()));
         }
-        setItemDataSource(new BeanItem(instance));
-        setVisibleItemProperties(vp);
     }
 
-    public PMContext getCtx() {
+    public final PMContext getCtx() {
         return ctx;
     }
 
-    private class PMFieldFactory extends DefaultFieldFactory {
-
-        @Override
-        public Field createField(Item item, Object propertyId, Component uiContext) {
-            /*final TextField textField = new TextField("id");
-            textField.setEnabled(false);
-            return textField;*/
-            Field f = super.createField(item, propertyId, uiContext);
-            return f;
-        }
-    }
+   
 }

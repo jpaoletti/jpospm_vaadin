@@ -7,9 +7,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import org.jpos.ee.pm.core.Field;
 import org.jpos.ee.pm.core.Operation;
 import org.jpos.ee.pm.core.Operations;
 import org.jpos.ee.pm.core.PMContext;
+import org.jpos.ee.pm.core.PMCoreObject;
 import org.jpos.ee.pm.core.PMException;
 import org.jpos.ee.pm.core.PresentationManager;
 import org.jpos.ee.pm.core.operations.ListOperation;
@@ -51,10 +53,14 @@ public class ListCommand extends GenericCommand {
             createOperationBar(vl, Operation.SCOPE_GRAL);
 
             final Table table = new Table();
-            table.setContainerDataSource(new ListContainer(getCtx().getList()));
+            table.setContainerDataSource(new ListContainer(getCtx(), getCtx().getList()));
             table.setHeight("150px");
             table.setPageLength(getCtx().getList().getRowsPerPage());
             table.setSizeFull();
+
+            for (Field field : getCtx().getEntity().getOrderedFields()) {
+                table.setColumnHeader(field.getId(), PresentationManager.getMessage("pm.field." + getCtx().getEntity().getId() + "." + field.getId()));
+            }
 
             table.addActionHandler(new Action.Handler() {
 
@@ -84,7 +90,7 @@ public class ListCommand extends GenericCommand {
                 }
 
                 public void handleAction(Action action, Object sender, Object target) {
-                    LocalListAction lla = (LocalListAction)action;
+                    LocalListAction lla = (LocalListAction) action;
                     lla.doIt();
                 }
             });
@@ -107,6 +113,7 @@ public class ListCommand extends GenericCommand {
     }
 
     private class LocalListAction extends Action {
+
         private PMMainWindow window;
         private GenericCommand command;
 
@@ -115,7 +122,7 @@ public class ListCommand extends GenericCommand {
         }
 
         public LocalListAction(PMContext ctx, Operation operation) throws PMException {
-            super(PresentationManager.getMessage("operation."+operation.getId()));
+            super(PresentationManager.getMessage("operation." + operation.getId()));
             window = (PMMainWindow) ctx.get(WINDOW);
             command = CommandFactory.newCommand(operation.getId(), ctx);
         }

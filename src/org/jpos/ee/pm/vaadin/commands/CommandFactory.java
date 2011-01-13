@@ -10,11 +10,13 @@ import org.jpos.ee.pm.core.PMContext;
 public class CommandFactory {
 
     public static GenericCommand newCommand(String id, PMContext ctx) {
-        if("list".equals(id)){
+        if ("list".equals(id)) {
             return new ListCommand(ctx);
-        } else if ("show".equals(id)){
+        } else if ("show".equals(id)) {
             return new ShowCommand(ctx);
-        } else if ("add".equals(id)){
+        } else if ("add".equals(id)) {
+        } else if ("edit".equals(id)) {
+            return new EditCommand(ctx);
         }
         return null;
     }
