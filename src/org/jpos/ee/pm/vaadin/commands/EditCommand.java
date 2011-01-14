@@ -6,8 +6,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import org.jpos.ee.pm.core.*;
 import org.jpos.ee.pm.core.operations.EditOperation;
-import org.jpos.ee.pm.core.operations.ShowOperation;
+import org.jpos.ee.pm.core.operations.OperationCommandSupport;
 import org.jpos.ee.pm.vaadin.components.GenericForm;
+import org.jpos.ee.pm.vaadin.components.PMMainWindow;
 
 /**
  *
@@ -41,14 +42,29 @@ public class EditCommand extends GenericCommand {
                             f.discard();
                         }
                     });
-            footer.addComponent(discardChanges);
-            Button apply = new Button("Apply", new Button.ClickListener() {
+            //footer.addComponent(discardChanges);
+            Button apply = new Button("Ok", new Button.ClickListener() {
 
                 public void buttonClick(ClickEvent event) {
                     try {
-                        f.commit();
+                        getCtx().put("param_finish", "1");
+                        for (Field field : getCtx().getEntity().getAllFields()) {
+                            final com.vaadin.ui.Field vf = f.getField(field.getId());
+                            if (vf != null && !vf.isReadOnly()) {
+                                getCtx().put("param_f_" + field.getId(), vf.getValue());
+                                vf.validate();
+                            }
+                        }
+                        doExcecute();
+
+                        final PMContext c = new PMContext(getCtx().getSessionId());
+                        final PMMainWindow window = (PMMainWindow) getCtx().get(WINDOW);
+                        c.put(OperationCommandSupport.PM_ID, getCtx().get("entity"));
+                        c.put(WINDOW, getCtx().get(WINDOW));
+                        final GenericCommand cmd = CommandFactory.newCommand("show", c);
+                        window.setMainScreen(cmd.execute());
                     } catch (Exception e) {
-                        // Ignored, we'll let the Form handle the errors
+                        PresentationManager.getPm().error(e);
                     }
                 }
             });
