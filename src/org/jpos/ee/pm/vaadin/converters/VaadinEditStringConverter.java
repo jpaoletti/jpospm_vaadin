@@ -27,6 +27,11 @@ import org.jpos.ee.pm.core.PMContext;
 public class VaadinEditStringConverter extends VaadinConverter {
 
     @Override
+    public Object build(PMContext ctx) throws ConverterException {
+        return ctx.get(PM_FIELD_VALUE);
+    }
+
+    @Override
     public Object visualize(PMContext ctx) throws ConverterException {
         return createBasicField(ctx);
     }
