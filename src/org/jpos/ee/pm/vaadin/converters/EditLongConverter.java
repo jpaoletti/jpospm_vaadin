@@ -1,7 +1,10 @@
 package org.jpos.ee.pm.vaadin.converters;
 
+import com.vaadin.data.Validator;
+import com.vaadin.ui.TextField;
 import org.jpos.ee.pm.converter.ConverterException;
 import org.jpos.ee.pm.core.PMContext;
+import org.jpos.ee.pm.core.PresentationManager;
 
 /**
  *
@@ -18,4 +21,31 @@ public class EditLongConverter extends VaadinEditStringConverter {
             throw new ConverterException(e);
         }
     }
+
+    @Override
+    public Object visualize(PMContext ctx) throws ConverterException {
+        final TextField f = (TextField)super.visualize(ctx);
+        f.addValidator(new Validator() {
+
+            public void validate(Object value) throws InvalidValueException {
+                try {
+                    Long.parseLong(value.toString());
+                } catch (Exception e) {
+                    throw new InvalidValueException(PresentationManager.getMessage("invalid.long"));
+                }
+            }
+
+            public boolean isValid(Object value) {
+                try {
+                    validate(value);
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        });
+        return f;
+    }
+
+
 }
