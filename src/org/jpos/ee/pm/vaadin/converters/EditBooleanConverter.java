@@ -31,14 +31,7 @@ public class EditBooleanConverter extends VaadinConverter {
 
     @Override
     public Object build(PMContext ctx) throws ConverterException {
-        String res = ctx.getString(PM_FIELD_VALUE);
-        if (res.compareTo("true") == 0) {
-            return true;
-        }
-        if (res.compareTo("false") == 0) {
-            return false;
-        }
-        return null;
+        return ctx.get(PM_FIELD_VALUE);
     }
 
     @Override
