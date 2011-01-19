@@ -22,6 +22,8 @@ public class CommandFactory {
             return new DeleteCommand(ctx);
         }else if ("filter".equals(id)) {
             return new FilterCommand(ctx);
+        }else if ("sort".equals(id)) {
+            return new SortCommand(ctx);
         }
         return null;
     }
