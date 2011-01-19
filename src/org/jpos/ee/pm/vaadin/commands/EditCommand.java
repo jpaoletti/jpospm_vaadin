@@ -6,7 +6,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import org.jpos.ee.pm.core.*;
 import org.jpos.ee.pm.core.operations.EditOperation;
-import org.jpos.ee.pm.core.operations.OperationCommandSupport;
 import org.jpos.ee.pm.vaadin.components.GenericForm;
 import org.jpos.ee.pm.vaadin.components.PMMainWindow;
 
@@ -44,7 +43,7 @@ public class EditCommand extends GenericCommand {
                         }
                     });
             //footer.addComponent(discardChanges);
-            Button apply = new Button("Ok", new Button.ClickListener() {
+            Button apply = new Button(PresentationManager.getMessage("pm.vaadin.submit"), new Button.ClickListener() {
 
                 public void buttonClick(ClickEvent event) {
                     try {
