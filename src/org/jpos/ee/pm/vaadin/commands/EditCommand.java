@@ -11,7 +11,8 @@ import org.jpos.ee.pm.vaadin.components.GenericForm;
 import org.jpos.ee.pm.vaadin.components.PMMainWindow;
 
 /**
- *
+ * After finishing, this operation goes to show
+ * 
  * @author jpaoletti
  */
 public class EditCommand extends GenericCommand {
@@ -57,12 +58,8 @@ public class EditCommand extends GenericCommand {
                         }
                         doExcecute();
 
-                        final PMContext c = new PMContext(getCtx().getSessionId());
                         final PMMainWindow window = (PMMainWindow) getCtx().get(WINDOW);
-                        c.put(OperationCommandSupport.PM_ID, getCtx().get("entity"));
-                        c.put(WINDOW, getCtx().get(WINDOW));
-                        final GenericCommand cmd = CommandFactory.newCommand("show", c);
-                        window.setMainScreen(cmd.execute());
+                        window.setMainScreen(redirect(getCtx(), "show"));
                     } catch (Exception e) {
                         PresentationManager.getPm().error(e);
                     }
