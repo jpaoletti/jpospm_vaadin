@@ -14,7 +14,11 @@ public class EditDateConverter extends VaadinConverter {
 
     @Override
     public Object build(PMContext ctx) throws ConverterException {
-        return ctx.get(PM_FIELD_VALUE);
+        final Object res = ctx.get(PM_FIELD_VALUE);
+        if (res == null || res instanceof String) {
+            return null;
+        }
+        return res;
     }
 
     @Override

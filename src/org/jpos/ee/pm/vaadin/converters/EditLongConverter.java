@@ -15,6 +15,9 @@ public class EditLongConverter extends VaadinEditStringConverter {
     @Override
     public Object build(PMContext ctx) throws ConverterException {
         String res = ctx.getString(PM_FIELD_VALUE);
+        if (res == null || "".equals(res.trim())) {
+            return null;
+        }
         try {
             return Long.parseLong(res);
         } catch (Exception e) {
@@ -24,7 +27,7 @@ public class EditLongConverter extends VaadinEditStringConverter {
 
     @Override
     public Object visualize(PMContext ctx) throws ConverterException {
-        final TextField f = (TextField)super.visualize(ctx);
+        final TextField f = (TextField) super.visualize(ctx);
         f.addValidator(new Validator() {
 
             public void validate(Object value) throws InvalidValueException {
@@ -46,6 +49,4 @@ public class EditLongConverter extends VaadinEditStringConverter {
         });
         return f;
     }
-
-
 }
