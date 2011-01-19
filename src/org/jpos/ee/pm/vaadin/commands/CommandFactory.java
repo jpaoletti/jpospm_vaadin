@@ -18,6 +18,10 @@ public class CommandFactory {
             return new AddCommand(ctx);
         } else if ("edit".equals(id)) {
             return new EditCommand(ctx);
+        } else if ("delete".equals(id)) {
+            return new DeleteCommand(ctx);
+        }else if ("filter".equals(id)) {
+            return new FilterCommand(ctx);
         }
         return null;
     }
