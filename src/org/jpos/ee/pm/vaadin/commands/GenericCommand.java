@@ -32,6 +32,27 @@ public abstract class GenericCommand {
         this.ctx = ctx;
     }
 
+    /**
+     * Create a new context based on the given one and returns the result
+     * of excecuting the operation with this new context. Only idSession, PM_ID
+     * and WINDOW are copied to the new context. If you need more, use the
+     * #ctx.getPair(key) method and pass it as a parameter.
+     *
+     * @param ctx The old context
+     * @param operation The operation id to be excecuted
+     * @param params The context pair to be added to new context.
+     *
+     * @return The horizontal layout to set in main window
+     */
+    public HorizontalLayout redirect(final PMContext ctx, String operation, PMContext.ContextPair ... params) {
+        final PMContext c = new PMContext(ctx.getSessionId());
+        c.put(OperationCommandSupport.PM_ID, getCtx().get(OperationCommandSupport.PM_ID));
+        c.put(WINDOW, getCtx().get(WINDOW));
+        c.put(params);
+        final GenericCommand cmd = CommandFactory.newCommand(operation, c);
+        return cmd.execute();
+    }
+
     protected void createOperationBar(VerticalLayout vl, String... scopes) throws PMException {
         HorizontalLayout bar = new HorizontalLayout();
         Operations opers = getCtx().getEntity().getOperations().getOperationsFor(getCtx().getOperation());
@@ -105,4 +126,5 @@ public abstract class GenericCommand {
     protected String getOperationTitle(final Entity entity, final Operation operation) throws PMException {
         return PresentationManager.getMessage("pm.entity." + entity.getId()) + "(" + PresentationManager.getMessage("operation." + operation.getId()) + ")";
     }
+
 }
