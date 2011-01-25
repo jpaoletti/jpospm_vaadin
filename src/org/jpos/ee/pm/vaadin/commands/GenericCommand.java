@@ -3,6 +3,7 @@ package org.jpos.ee.pm.vaadin.commands;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
@@ -15,6 +16,7 @@ import org.jpos.ee.pm.core.PMContext;
 import org.jpos.ee.pm.core.PMException;
 import org.jpos.ee.pm.core.PresentationManager;
 import org.jpos.ee.pm.core.operations.OperationCommandSupport;
+import org.jpos.ee.pm.vaadin.components.ConfirmationWindow;
 import org.jpos.ee.pm.vaadin.components.PMMainWindow;
 
 /**
@@ -44,7 +46,7 @@ public abstract class GenericCommand {
      *
      * @return The horizontal layout to set in main window
      */
-    public HorizontalLayout redirect(final PMContext ctx, String operation, PMContext.ContextPair ... params) {
+    public HorizontalLayout redirect(final PMContext ctx, String operation, PMContext.ContextPair... params) {
         final PMContext c = new PMContext(ctx.getSessionId());
         c.put(OperationCommandSupport.PM_ID, getCtx().get(OperationCommandSupport.PM_ID));
         c.put(WINDOW, getCtx().get(WINDOW));
@@ -72,7 +74,20 @@ public abstract class GenericCommand {
                     c.put("new", false);
                     final PMMainWindow window = (PMMainWindow) ctx.get(WINDOW);
                     final GenericCommand cmd = CommandFactory.newCommand(operation.getId(), c);
-                    window.setMainScreen(cmd.execute());
+                    try {
+                        if (getCtx().getEntity().getOperations().getOperation(operation.getId()).getConfirm()) {
+                            window.addWindow(new ConfirmationWindow("pm.confirmation.question", PresentationManager.getMessage("pm.confirmation.label"), new ClickListener() {
+
+                                public void buttonClick(ClickEvent event) {
+                                    window.setMainScreen(cmd.execute());
+                                }
+                            }));
+                        } else {
+                            window.setMainScreen(cmd.execute());
+                        }
+                    } catch (PMException ex) {
+                        window.sendError(ex);
+                    }
                 }
             });
         }
@@ -126,5 +141,4 @@ public abstract class GenericCommand {
     protected String getOperationTitle(final Entity entity, final Operation operation) throws PMException {
         return PresentationManager.getMessage("pm.entity." + entity.getId()) + "(" + PresentationManager.getMessage("operation." + operation.getId()) + ")";
     }
-
 }

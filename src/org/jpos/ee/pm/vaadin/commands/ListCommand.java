@@ -2,23 +2,15 @@ package org.jpos.ee.pm.vaadin.commands;
 
 import com.vaadin.event.Action;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
-import org.jpos.ee.pm.core.Field;
-import org.jpos.ee.pm.core.Operation;
-import org.jpos.ee.pm.core.Operations;
-import org.jpos.ee.pm.core.PMContext;
-import org.jpos.ee.pm.core.PMCoreObject;
-import org.jpos.ee.pm.core.PMException;
-import org.jpos.ee.pm.core.PresentationManager;
+import org.jpos.ee.pm.core.*;
 import org.jpos.ee.pm.core.operations.ListOperation;
 import org.jpos.ee.pm.core.operations.OperationCommandSupport;
-import org.jpos.ee.pm.vaadin.components.ListContainer;
-import org.jpos.ee.pm.vaadin.components.PMMainWindow;
-import org.jpos.ee.pm.vaadin.components.TableNavForm;
+import org.jpos.ee.pm.vaadin.components.*;
 
 /**
  *
@@ -36,12 +28,6 @@ public class ListCommand extends GenericCommand {
             ListOperation op = new ListOperation("list");
             getCtx().put(OperationCommandSupport.PM_ID, getCtx().get("entity"));
 
-            if (getCtx().getBoolean("new", true)) {
-                getCtx().put("order", null);
-                getCtx().put("desc", false);
-                getCtx().put("page", 1);
-                getCtx().put("rows_per_page", 10);
-            }
             op.excecute(getCtx());
 
             HorizontalLayout l = new HorizontalLayout();
@@ -65,6 +51,7 @@ public class ListCommand extends GenericCommand {
             table.addActionHandler(new Action.Handler() {
 
                 public Action[] getActions(Object target, Object sender) {
+                    final PMMainWindow window = (PMMainWindow) getCtx().get(WINDOW);
                     try {
                         final Operations itemOperations = getMyOperations().getItemOperations();
                         final Action[] actions = new Action[itemOperations.getOperations().size()];
@@ -73,14 +60,15 @@ public class ListCommand extends GenericCommand {
                             PMContext c = new PMContext(getCtx().getSessionId());
                             c.put(OperationCommandSupport.PM_ID, getCtx().get("entity"));
                             c.put(OperationCommandSupport.PM_ITEM, target.toString());
-                            c.put(WINDOW, getCtx().get(WINDOW));
+                            c.put(WINDOW, window);
+                            c.setEntityContainer(getCtx().getEntityContainer());
                             actions[i] = new LocalListAction(c, operation);
                             actions[i].setIcon(getOperationIcon(operation));
                             i++;
                         }
                         return actions;
                     } catch (PMException ex) {
-                        PresentationManager.getPm().error(ex);
+                        window.sendError(ex);
                     }
                     return null;
                 }
@@ -90,14 +78,16 @@ public class ListCommand extends GenericCommand {
                 }
 
                 public void handleAction(Action action, Object sender, Object target) {
-                    LocalListAction lla = (LocalListAction) action;
-                    lla.doIt();
+                    try {
+                        LocalListAction lla = (LocalListAction) action;
+                        lla.doIt();
+                    } catch (PMException ex) {
+                        PresentationManager.getPm().error(ex);
+                    }
                 }
             });
 
-
             vl.addComponent(table);
-
 
             final TableNavForm navform = new TableNavForm(getCtx());
             vl.addComponent(navform);
@@ -127,9 +117,21 @@ public class ListCommand extends GenericCommand {
             command = CommandFactory.newCommand(operation.getId(), ctx);
         }
 
-        public void doIt() {
-            final HorizontalLayout l = command.execute();
-            window.setMainScreen(l);
+        public void doIt() throws PMException {
+            if (command.getCtx().getEntity().getOperations().getOperation(command.getOperationId()).getConfirm()) {
+                window.addWindow(
+                        new ConfirmationWindow(
+                        "pm.confirmation.question",
+                        PresentationManager.getMessage("pm.confirmation.label"),
+                        new ClickListener() {
+
+                            public void buttonClick(ClickEvent event) {
+                                window.setMainScreen(command.execute());
+                            }
+                        }));
+            } else {
+                window.setMainScreen(command.execute());
+            }
         }
     }
 }
