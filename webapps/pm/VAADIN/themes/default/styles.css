@@ -32,3 +32,25 @@
 .v-app .v-horizontallayout-topbar .v-nativebutton-link:hover span {
     text-decoration: underline;
 }
+
+.v-menubar{
+    background: #5c5d60 url(top-bg.png) repeat-x;
+    color: white;
+    height: 35px;
+    text-shadow: rgba(0, 0, 0, 0, 898438) 0px 1px 0px;
+}
+
+.v-menubar .v-menubar-menuitem {
+    height: 30px;
+    vertical-align: middle;
+    padding: 7px 10px 10px 10px;
+}
+
+.v-formlayout-row .v-caption {
+    background: #5c5d60 url(top-bg.png) repeat-x;
+    color: white;
+    height: 20px;
+    text-shadow: rgba(0, 0, 0, 0, 898438) 0px 1px 0px;
+    vertical-align: middle;
+    padding: 3px 10px 0px 10px;
+}
