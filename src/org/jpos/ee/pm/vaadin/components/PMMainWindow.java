@@ -186,4 +186,12 @@ public class PMMainWindow extends Window {
         mainBar = l;
         mainExpand.setExpandRatio(l, 1);
     }
+
+    public void sendError(PMException ex) {
+        PresentationManager.getPm().error(ex);
+        showNotification(
+                "Error",
+                "Error",
+                Notification.TYPE_ERROR_MESSAGE);
+    }
 }
