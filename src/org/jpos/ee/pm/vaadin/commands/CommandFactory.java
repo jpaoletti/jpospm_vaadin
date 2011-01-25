@@ -10,21 +10,23 @@ import org.jpos.ee.pm.core.PMContext;
 public class CommandFactory {
 
     public static GenericCommand newCommand(String id, PMContext ctx) {
+        ctx.put("operation",id);
+        GenericCommand r = null;
         if ("list".equals(id)) {
-            return new ListCommand(ctx);
+            r = new ListCommand(ctx);
         } else if ("show".equals(id)) {
-            return new ShowCommand(ctx);
+            r = new ShowCommand(ctx);
         } else if ("add".equals(id)) {
-            return new AddCommand(ctx);
+            r = new AddCommand(ctx);
         } else if ("edit".equals(id)) {
-            return new EditCommand(ctx);
+            r = new EditCommand(ctx);
         } else if ("delete".equals(id)) {
-            return new DeleteCommand(ctx);
-        }else if ("filter".equals(id)) {
-            return new FilterCommand(ctx);
-        }else if ("sort".equals(id)) {
-            return new SortCommand(ctx);
+            r = new DeleteCommand(ctx);
+        } else if ("filter".equals(id)) {
+            r = new FilterCommand(ctx);
+        } else if ("sort".equals(id)) {
+            r = new SortCommand(ctx);
         }
-        return null;
+        return r;
     }
 }
