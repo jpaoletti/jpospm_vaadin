@@ -43,9 +43,19 @@ public class ListCommand extends GenericCommand {
             table.setHeight("150px");
             table.setPageLength(getCtx().getList().getRowsPerPage());
             table.setSizeFull();
+            table.setCellStyleGenerator(new HighlighterGeneration(getCtx().getEntityContainer()));
 
+            if(getCtx().getList().isShowRowNumber()){
+                table.setColumnHeader(ListContainer.ROW_NUM_ID, "");
+                table.setColumnWidth(ListContainer.ROW_NUM_ID, 40);
+            }
             for (Field field : getCtx().getEntity().getOrderedFields()) {
                 table.setColumnHeader(field.getId(), PresentationManager.getMessage("pm.field." + getCtx().getEntity().getId() + "." + field.getId()));
+                try {
+                    table.setColumnWidth(field.getId(), Integer.parseInt(field.getWidth()));
+                } catch (Exception e) {
+                    table.setColumnWidth(field.getId(), -1);
+                }
             }
 
             table.addActionHandler(new Action.Handler() {
