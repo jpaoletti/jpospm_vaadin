@@ -34,8 +34,6 @@ public class MenuItemLocationDefault implements MenuItemLocation {
             return new Command() {
 
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    System.out.println("Operation: " + ctx.get("operation"));
-                    System.out.println("Entity: " + ctx.get("entity"));
                     GenericCommand c = CommandFactory.newCommand(ctx.getString("operation"), ctx);
                     final HorizontalLayout l = c.execute();
                     window.setMainScreen(l);
