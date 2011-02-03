@@ -68,10 +68,7 @@ public abstract class GenericCommand {
             button.addListener(new Button.ClickListener() {
 
                 public void buttonClick(ClickEvent event) {
-                    final PMContext c = new PMContext(getCtx().getSessionId());
-                    c.put(OperationCommandSupport.PM_ID, getCtx().get("entity"));
-                    c.put(WINDOW, getCtx().get(WINDOW));
-                    c.put("new", false);
+                    final PMContext c = cloneContext(getCtx());
                     final PMMainWindow window = (PMMainWindow) ctx.get(WINDOW);
                     final GenericCommand cmd = CommandFactory.newCommand(operation.getId(), c);
                     try {
@@ -92,6 +89,14 @@ public abstract class GenericCommand {
             });
         }
         vl.addComponent(bar);
+    }
+
+    protected PMContext cloneContext(PMContext ctx) {
+        final PMContext c = new PMContext(ctx.getSessionId());
+        c.put(OperationCommandSupport.PM_ID, ctx.get("entity"));
+        c.put(WINDOW, ctx.get(WINDOW));
+        c.put("new", false);
+        return c;
     }
 
     protected ThemeResource getOperationIcon(final Operation operation) {
