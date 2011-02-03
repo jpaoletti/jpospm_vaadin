@@ -7,10 +7,12 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import java.util.List;
 import org.jpos.ee.pm.core.*;
 import org.jpos.ee.pm.core.operations.ListOperation;
 import org.jpos.ee.pm.core.operations.OperationCommandSupport;
 import org.jpos.ee.pm.vaadin.components.*;
+import org.vaadin.cssinject.CSSInject;
 
 /**
  *
@@ -31,8 +33,21 @@ public class ListCommand extends GenericCommand {
             op.excecute(getCtx());
 
             HorizontalLayout l = new HorizontalLayout();
-            l.setSizeFull();
             VerticalLayout vl = new VerticalLayout();
+            if (getCtx().getEntity().getHighlights() != null) {
+                final List<Highlight> highlights = getCtx().getEntity().getHighlights().getHighlights();
+                for (Highlight highlight : highlights) {
+                    int id = highlights.indexOf(highlight);
+                    CSSInject i;
+                    if (highlight.isInstance()) {
+                        i = new CSSInject(".v-table-row-highlight" + id + "{background-color:" + highlight.getColor() + ";}");
+                    } else {
+                        i = new CSSInject(".v-table-cell-content-highlight" + id + "{background-color:" + highlight.getColor() + ";}");
+                    }
+                    vl.addComponent(i);
+                }
+            }
+            l.setSizeFull();
             //vl.setSpacing(true);
             vl.setMargin(false, true, true, true);
             createTitle(vl);
@@ -45,7 +60,7 @@ public class ListCommand extends GenericCommand {
             table.setSizeFull();
             table.setCellStyleGenerator(new HighlighterGeneration(getCtx().getEntityContainer()));
 
-            if(getCtx().getList().isShowRowNumber()){
+            if (getCtx().getList().isShowRowNumber()) {
                 table.setColumnHeader(ListContainer.ROW_NUM_ID, "");
                 table.setColumnWidth(ListContainer.ROW_NUM_ID, 40);
             }

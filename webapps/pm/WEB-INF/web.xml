@@ -17,6 +17,10 @@
             <param-name>application</param-name>
             <param-value>org.jpos.ee.pm.vaadin.PMVaadinApp</param-value>
         </init-param>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>org.jpos.ee.pm.vaadin.widgetset.MyAppWidgetSet</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>app</servlet-name>
